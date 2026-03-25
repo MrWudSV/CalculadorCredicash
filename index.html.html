@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoría de Capital | FGR El Salvador</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .modal-active { overflow: hidden; }
+    </style>
+</head>
+<body class="bg-slate-50 min-h-screen p-4 md:p-8 font-sans modal-active">
+
+    <div id="modalAviso" class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/90 backdrop-blur-sm p-4">
+        <div class="bg-white max-w-lg w-full rounded-3xl shadow-2xl overflow-hidden border-t-8 border-amber-500">
+            <div class="p-8 text-center">
+                <div class="bg-amber-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-xl font-black text-slate-800 uppercase mb-4 tracking-tight">Aviso Importante de Uso</h2>
+                <div class="text-sm text-slate-600 text-left space-y-4 leading-relaxed">
+                    <p>• Esta es una herramienta <b>sin fines de lucro</b> creada con el único propósito de brindar orientación técnica.</p>
+                    <p>• <b>NO</b> representa una herramienta oficial de la Fiscalía General de la República (FGR) ni constituye un instrumento legal u oficial del Gobierno.</p>
+                    <p>• Los resultados son proyecciones basadas en lógica contable forense general y <b>no sustituyen</b> el peritaje oficial de las autoridades competentes.</p>
+                    <p class="font-bold text-slate-800 italic underline">• El usuario es el único responsable de la veracidad de los datos ingresados y de la interpretación de los resultados obtenidos.</p>
+                </div>
+                <button onclick="cerrarModal()" class="mt-8 w-full bg-slate-900 hover:bg-black text-white font-bold py-4 rounded-xl transition-all shadow-lg uppercase text-xs tracking-widest">
+                    He leído y acepto los términos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="max-w-6xl mx-auto bg-white shadow-2xl rounded-3xl overflow-hidden border border-slate-200">
+        <header class="bg-slate-900 text-white p-6 border-b-4 border-emerald-500 text-center">
+            <h1 class="text-2xl font-black uppercase tracking-tighter text-emerald-400">Auditoría de Perjuicio Patrimonial</h1>
+        </header>
+
+        <div class="p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+            <aside class="lg:col-span-4 space-y-6">
+                <div class="bg-slate-100 p-6 rounded-2xl border border-slate-200 shadow-sm">
+                    <h2 class="text-xs font-bold text-slate-700 uppercase mb-4 tracking-widest text-center underline">Registrar Contrato</h2>
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Inversión ($)</label>
+                            <input type="number" id="monto" placeholder="0.00" class="w-full p-3 border-2 rounded-xl outline-none focus:border-emerald-500 font-mono text-lg transition-all">
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Tasa %</label>
+                                <select id="tasa" class="w-full p-3 border-2 rounded-xl outline-none bg-white font-bold cursor-pointer">
+                                    <option value="10">10%</option>
+                                    <option value="12">12%</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] font-bold text-slate-500 uppercase">Meses Cobrados</label>
+                                <input type="number" id="meses" placeholder="0" class="w-full p-3 border-2 rounded-xl outline-none font-bold">
+                            </div>
+                        </div>
+                        <button onclick="agregarContrato()" class="w-full bg-slate-900 hover:bg-black text-white font-black py-4 rounded-xl transition-all shadow-lg active:scale-95 uppercase text-xs tracking-widest">
+                            Añadir Contrato
+                        </button>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-50 p-6 rounded-2xl border border-emerald-100">
+                    <h2 class="text-xs font-bold text-emerald-800 uppercase mb-3 tracking-widest">Origen de sus Fondos</h2>
+                    <select id="perfilUsuario" onchange="actualizarDocumentacion()" class="w-full p-3 border-2 border-emerald-200 rounded-xl outline-none bg-white text-sm font-semibold text-emerald-900 cursor-pointer shadow-sm">
+                        <option value="empleado">Empleado Formal (Salario)</option>
+                        <option value="emp_informal">Empleado Informal (Sin Boletas)</option>
+                        <option value="comerciante">Comerciante Formal</option>
+                        <option value="informal">Comerciante Informal / Mercado</option>
+                        <option value="ganadero">Ganadero / Sector Agrícola</option>
+                        <option value="remesas">Remesas Familiares</option>
+                        <option value="venta">Venta de Activos (Casa/Carro)</option>
+                    </select>
+                </div>
+            </aside>
+
+            <main class="lg:col-span-8 space-y-6">
+                <div class="border rounded-2xl overflow-hidden shadow-sm bg-white">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-800 text-white uppercase text-[9px] tracking-widest border-b border-slate-700">
+                            <tr>
+                                <th class="p-4">Contrato</th>
+                                <th class="p-4 text-right">Inversión</th>
+                                <th class="p-4 text-right">Total Recibido</th>
+                                <th class="p-4 text-right">Balance</th>
+                                <th class="p-4"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaCuerpo" class="divide-y text-slate-600 italic text-center text-[11px]">
+                            <tr><td colspan="5" class="p-8 text-slate-400">No hay contratos registrados</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div id="desgloseCont" class="hidden grid grid-cols-2 gap-4">
+                    <div class="p-4 bg-white border border-slate-200 rounded-xl flex justify-between items-center shadow-sm">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Pérdida Bruta (+)</span>
+                        <span id="totalPerjuicio" class="font-mono font-bold text-emerald-600">$0.00</span>
+                    </div>
+                    <div class="p-4 bg-white border border-slate-200 rounded-xl flex justify-between items-center shadow-sm">
+                        <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider">Ganancia Neta (-)</span>
+                        <span id="totalExcedente" class="font-mono font-bold text-red-500">$0.00</span>
+                    </div>
+                </div>
+
+                <div id="dashboardPrincipal" class="hidden p-8 rounded-3xl shadow-xl border-l-8 transition-all duration-500">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div>
+                            <p id="tituloDashboard" class="text-[10px] font-bold uppercase tracking-[0.2em] mb-1"></p>
+                            <p id="montoDashboard" class="text-5xl font-black font-mono"></p>
+                        </div>
+                        <div class="text-right">
+                            <span id="badgeEstado" class="px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest shadow-sm"></span>
+                        </div>
+                    </div>
+                    <div id="avisoLegalContenedor" class="mt-6 p-5 rounded-xl border-2 border-dashed hidden transition-all">
+                        <p id="avisoLegalTexto" class="text-[11px] leading-relaxed font-bold uppercase tracking-tight text-center"></p>
+                    </div>
+                </div>
+
+                <section id="seccionDoc" class="hidden space-y-4">
+                    <h3 class="text-lg font-black text-slate-800 uppercase tracking-tighter border-b-2 border-slate-200 pb-2 text-center md:text-left">Guía de Documentación Proprobatoria</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="p-4 bg-slate-50 rounded-xl border shadow-sm">
+                            <h4 class="text-[10px] font-bold text-slate-500 uppercase mb-3 underline tracking-widest">1. Soporte del Negocio</h4>
+                            <ul class="text-[11px] space-y-2 text-slate-700">
+                                <li>• <b>Contrato Original:</b> Documentos firmados y sellados.</li>
+                                <li>• <b>DUI:</b> Copia ampliada al 150%.</li>
+                                <li>• <b>Evidencia Digital:</b> Capturas de chats, audios o correos.</li>
+                                <li>• <b>Vouchers:</b> Comprobantes de depósitos bancarios realizados.</li>
+                            </ul>
+                        </div>
+                        <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 shadow-sm">
+                            <h4 class="text-[10px] font-bold text-blue-600 uppercase mb-3 underline tracking-widest">2. Justificación de Origen Lícito</h4>
+                            <ul id="listaDocDinamica" class="text-[11px] space-y-2 text-blue-900"></ul>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+        <footer class="bg-slate-50 p-4 border-t text-[9px] text-slate-400 text-center uppercase tracking-widest">
+            Herramienta Educativa Independiente • Basada en Normativa de Lavado de Dinero
+        </footer>
+    </div>
+
+    <script>
+        let contratos = [];
+
+        function cerrarModal() {
+            document.getElementById('modalAviso').style.display = 'none';
+            document.body.classList.remove('modal-active');
+        }
+
+        function agregarContrato() {
+            const monto = parseFloat(document.getElementById('monto').value);
+            const tasa = parseFloat(document.getElementById('tasa').value);
+            const meses = parseInt(document.getElementById('meses').value) || 0;
+            if (!monto || isNaN(monto)) return;
+            const intereses = monto * (tasa / 100) * meses;
+            const capitalDevuelto = meses >= 12 ? monto : 0;
+            const totalRecuperado = intereses + capitalDevuelto;
+            const balanceContrato = monto - totalRecuperado;
+            contratos.push({ monto, tasa, meses, totalRecuperado, balanceContrato });
+            actualizarUI();
+            document.getElementById('monto').value = "";
+            document.getElementById('meses').value = "";
+        }
+
+        function eliminar(index) {
+            contratos.splice(index, 1);
+            actualizarUI();
+        }
+
+        function actualizarDocumentacion() {
+            const perfil = document.getElementById('perfilUsuario').value;
+            const lista = document.getElementById('listaDocDinamica');
+            const docs = {
+                empleado: ["Constancia Salarial vigente.","Boletas de pago de los últimos 6 meses.","Estados de cuenta con débito de inversión."],
+                emp_informal: ["Constancia de Trabajo simple (firmada por patrono).","Estados de cuenta que reflejen depósitos semanales/quincenales.","Declaración Jurada de Ingresos (Notariada).","Testimonios o referencias de su lugar de trabajo."],
+                comerciante: ["Declaraciones de Renta e IVA (últimos 2 años).","Matrícula de Comercio vigente.","Facturas de compra de suministros."],
+                informal: ["Facturas de compra de mercadería a mayoristas.","Recibos de Alcaldía (uso de puesto/suelo).","Declaración Jurada de Ingresos (Notariada).","Fotos del puesto o inventario."],
+                ganadero: ["Guías de transporte de ganado (MAG).","Cartas de venta de semovientes.","Carnet de ganadero actualizado.","Facturas de compra de insumos agrícolas."],
+                remesas: ["Vouchers de remesas (Western, MoneyGram, etc).","Declaración de impuestos del familiar (Tax Return).","Partidas de nacimiento para vínculo familiar."],
+                venta: ["Escritura de compraventa (inmuebles).","Copia de cheque de caja o transferencia recibida.","Tarjeta de circulación y contrato de venta (vehículos)."]
+            };
+            lista.innerHTML = docs[perfil].map(d => `<li>• <b>${d}</b></li>`).join("");
+        }
+
+        function actualizarUI() {
+            const cuerpo = document.getElementById('tablaCuerpo');
+            cuerpo.innerHTML = "";
+            let sumaPerjuicios = 0, sumaExcedentes = 0;
+            if (contratos.length === 0) cuerpo.innerHTML = '<tr><td colspan="5" class="p-8 text-slate-400">No hay contratos registrados</td></tr>';
+            contratos.forEach((c, i) => {
+                const esPerjuicio = c.balanceContrato > 0;
+                if (esPerjuicio) sumaPerjuicios += c.balanceContrato;
+                else sumaExcedentes += Math.abs(c.balanceContrato);
+                cuerpo.innerHTML += `<tr class="hover:bg-slate-50 transition-colors"><td class="p-4 font-bold text-slate-400 text-xs border-r text-center">C-${i+1}<br><span class="text-[9px] uppercase font-normal">${c.meses}m</span></td><td class="p-4 text-right font-semibold text-slate-800 font-mono">$${c.monto.toLocaleString()}</td><td class="p-4 text-right text-slate-500 text-xs font-mono">$${c.totalRecuperado.toLocaleString()}</td><td class="p-4 text-right font-bold ${esPerjuicio ? 'text-emerald-600' : 'text-red-500'} font-mono">${esPerjuicio ? '$' + c.balanceContrato.toLocaleString() : '-$' + Math.abs(c.balanceContrato).toLocaleString()}</td><td class="p-4 text-center"><button onclick="eliminar(${i})" class="text-slate-300 hover:text-red-500 text-lg">✕</button></td></tr>`;
+            });
+
+            const resultadoNeto = sumaPerjuicios - sumaExcedentes;
+            const dash = document.getElementById('dashboardPrincipal'), desglose = document.getElementById('desgloseCont'), avisoCont = document.getElementById('avisoLegalContenedor'), avisoTexto = document.getElementById('avisoLegalTexto'), seccionDoc = document.getElementById('seccionDoc');
+            
+            if (contratos.length > 0) {
+                dash.classList.remove('hidden'); desglose.classList.remove('hidden'); seccionDoc.classList.remove('hidden');
+                document.getElementById('totalPerjuicio').innerText = `$${sumaPerjuicios.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                document.getElementById('totalExcedente').innerText = `$${sumaExcedentes.toLocaleString(undefined, {minimumFractionDigits: 2})}`;
+                const montoDash = document.getElementById('montoDashboard'), titulo = document.getElementById('tituloDashboard'), badge = document.getElementById('badgeEstado');
+                avisoCont.classList.remove('hidden');
+                if (resultadoNeto >= 0) {
+                    dash.className = "p-8 rounded-3xl shadow-xl border-l-8 bg-slate-900 text-white border-emerald-500 transition-all";
+                    titulo.innerText = "Saldo Neto a Reclamar"; titulo.className = "text-[10px] font-bold uppercase tracking-[0.2em] mb-1 text-slate-400";
+                    montoDash.innerText = `$${resultadoNeto.toLocaleString(undefined, {minimumFractionDigits: 2})}`; montoDash.className = "text-5xl font-black font-mono text-emerald-400";
+                    badge.innerText = "Afectación Confirmada"; badge.className = "px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-emerald-500 text-white font-bold";
+                    avisoCont.className = "mt-6 p-4 rounded-xl border-2 border-dashed border-emerald-900/30 bg-emerald-950/20 text-emerald-100";
+                    avisoTexto.innerText = "AVISO: Su situación presenta un posible saldo a su favor en la actividad. Póngase en contacto con la FGR para regularizar su situación y recopile los documentos que garanticen la procedencia licita de los fondos.";
+                } else {
+                    dash.className = "p-8 rounded-3xl shadow-xl border-l-8 bg-red-50 text-red-900 border-red-600 transition-all";
+                    titulo.innerText = "Excedente a Investigar"; titulo.className = "text-[10px] font-bold uppercase tracking-[0.2em] mb-1 text-red-800";
+                    montoDash.innerText = `$${Math.abs(resultadoNeto).toLocaleString(undefined, {minimumFractionDigits: 2})}`; montoDash.className = "text-5xl font-black font-mono text-red-600";
+                    badge.innerText = "Sujeto no es Víctima"; badge.className = "px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest bg-red-600 text-white font-bold";
+                    avisoCont.className = "mt-6 p-4 rounded-xl border-2 border-dashed border-red-200 bg-red-100 text-red-800 font-bold uppercase";
+                    avisoTexto.innerText = "AVISO: Si el balance global es negativo, el tablero mostrará el excedente que usted percibió de más, el cual está sujeto a investigación por la FGR y dicha cantidad podria ser solicitada para su devolucion, ademas de otras consecuencias legales.";
+                }
+                actualizarDocumentacion();
+            } else { dash.classList.add('hidden'); desglose.classList.add('hidden'); seccionDoc.classList.add('hidden'); }
+        }
+    </script>
+</body>
+</html>
